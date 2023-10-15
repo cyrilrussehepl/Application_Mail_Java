@@ -15,7 +15,7 @@
                                 <HBox alignment="CENTER_LEFT" prefHeight="30.0" spacing="5.0">
                                     <children>
                                         <Button minWidth="50.0" mnemonicParsing="false" onAction="#onSendClick" text="Send" />
-                                        <Label fx:id="LabelTo" text="Label" HBox.hgrow="ALWAYS" />
+                                        <Label fx:id="LabelFrom" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
@@ -41,10 +41,13 @@
                                 </HBox>
                                 <HBox VBox.vgrow="ALWAYS">
                                     <children>
-                                        <TextArea fx:id="TextAreaMailContent" HBox.hgrow="ALWAYS" />
+                                        <TextArea fx:id="TextAreaMailContent" HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></TextArea>
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                        <Insets bottom="5.0" left="60.0" right="10.0" top="5.0" />
                                     </padding>
                                 </HBox>
                             </children>

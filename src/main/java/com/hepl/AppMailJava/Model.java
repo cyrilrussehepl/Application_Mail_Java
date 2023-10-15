@@ -9,12 +9,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
-
-import static java.lang.Thread.sleep;
 
 public class Model {
     //Variables---------------------------------------------------------------------------------------------------------
@@ -29,6 +26,7 @@ public class Model {
         setupPropsGmail();
         setLoginInfos("cyril.russe@gmail.com", "tfkfyfmhaesewmwp");
         setSession();
+
     }
 
     public static Model getInstance() {
@@ -58,7 +56,7 @@ public class Model {
         );
     }
 
-    private Stage createTempStage(String message, boolean closable) {
+    public static Stage createTempStage(String message, boolean closable) {
         Stage stage = new Stage();
         stage.initOwner(null);  // Pour qu'il soit indépendant de la fenêtre principale
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -81,6 +79,10 @@ public class Model {
     public void setLoginInfos(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     //Methods-----------------------------------------------------------------------------------------------------------
