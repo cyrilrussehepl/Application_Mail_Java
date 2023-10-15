@@ -1,4 +1,4 @@
-package hepl.mailproject.AppMailJava;
+package com.hepl.AppMailJava;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,9 +10,9 @@ import java.io.IOException;
 public class MailApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MailApp.class.getResource("login-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        FXMLLoader fxmlLoader = new FXMLLoader(MailApp.class.getResource("main-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1200, 700);
+        stage.setTitle("MailUserAgent");
         stage.setScene(scene);
         stage.show();
     }
