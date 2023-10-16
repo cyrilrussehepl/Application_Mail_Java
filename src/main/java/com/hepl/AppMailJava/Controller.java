@@ -2,7 +2,11 @@ package com.hepl.AppMailJava;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
+import java.io.File;
 
 public class Controller {
     @FXML
@@ -13,6 +17,8 @@ public class Controller {
     private TextField InputSubject;
     @FXML
     private TextArea TextAreaMailContent;
+    @FXML
+    private Button ButtonAttachments;
 
     private Model model;
 
@@ -24,13 +30,26 @@ public class Controller {
     @FXML
     protected void onSendClick() {
         if (InputTo.getText().isEmpty() || TextAreaMailContent.getText().isEmpty()) {
-            Model.createTempStage("Please fill To and Mail Content fields", true).show();
+            Model.createTempStage("Please fill To and Mail Content fields", "Missing arguments", true).show();
             return;
         }
         if (InputSubject.getText().isEmpty() && !ConfirmationDialog("Missing subject", "Do you really want to send this message without subject?"))
             return;
 
-        model.sendMail(InputTo.getText(), InputSubject.getText(), TextAreaMailContent.getText());
+        if (model.sendMail(InputTo.getText(), InputSubject.getText(), TextAreaMailContent.getText())) {
+            InputSubject.clear();
+            InputTo.clear();
+            TextAreaMailContent.clear();
+        }
+    }
+
+    @FXML
+    protected void onAttachmentsClick() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Attachments FileChooser");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
+        File selectedFile = fileChooser.showOpenDialog((Stage)ButtonAttachments.getScene().getWindow());
+        model.setAttachment(selectedFile);
     }
 
     public static boolean ConfirmationDialog(String title, String content) {

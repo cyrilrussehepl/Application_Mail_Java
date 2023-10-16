@@ -9,9 +9,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
+import java.io.File;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Model {
     //Variables---------------------------------------------------------------------------------------------------------
@@ -20,6 +25,7 @@ public class Model {
     private Properties props;
     private String username;
     private String password;
+    private File attachment;
 
     //Singleton constructor---------------------------------------------------------------------------------------------
     private Model() {
@@ -56,12 +62,13 @@ public class Model {
         );
     }
 
-    public static Stage createTempStage(String message, boolean closable) {
+    public static Stage createTempStage(String message, String title, boolean closable) {
         Stage stage = new Stage();
         stage.initOwner(null);  // Pour qu'il soit indépendant de la fenêtre principale
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
-
+        if (title != null)
+            stage.setTitle(title);
 
         StackPane layout = new StackPane();
         layout.getChildren().add(new Label(message));
@@ -81,29 +88,58 @@ public class Model {
         this.password = password;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
+    public void setAttachment(File attachment) {
+        this.attachment = attachment;
+    }
+
     //Methods-----------------------------------------------------------------------------------------------------------
-    public void sendMail(String to, String subject, String text, String attachments) {
-        Stage sendingStage = createTempStage("Sending message...", false);
-        Stage successStage = createTempStage("Message sent successfully", true);
-        Stage errorStage = createTempStage("Error. Message impossible to send", true);
+    public boolean sendMail(String to, String subject, String text) {
+        Stage sendingStage = createTempStage("Sending message...", null, false);
+        Stage successStage = createTempStage("Message sent successfully", "Success", true);
+        Stage errorStage = createTempStage("Unable to send the message. An error occurred.\nPlease verify the recipient's email address and try again.", "Error", true);
         Message msg = new MimeMessage(session);
+        AtomicBoolean success = new AtomicBoolean(false);
+
         try {
             msg.setFrom(new InternetAddress(username));
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
             msg.setSubject(subject);
-            msg.setText(text);
-            sendingStage.show();
+
+            //Add attachment to msg if exists
+            if (attachment != null) {
+                //Text
+                MimeMultipart msgMP = new MimeMultipart();
+                MimeBodyPart msgBP = new MimeBodyPart();
+                msgBP.setText(text);
+                msgMP.addBodyPart(msgBP);
+
+                //File
+                msgBP = new MimeBodyPart();
+                DataSource so = new FileDataSource(attachment.getAbsolutePath());
+                msgBP.setDataHandler(new DataHandler(so));
+                msgBP.setFileName(attachment.getAbsolutePath());
+                msgMP.addBodyPart(msgBP);
+
+                //Image
+
+                msg.setContent(msgMP);
+            } else
+                msg.setText(text);
         } catch (Exception e) {
             errorStage.show();
-            return;
+            return false;
         }
+
+        sendingStage.show();
+
         new Thread(() -> {
             try {
                 Transport.send(msg);
+                success.set(true);
                 Platform.runLater(() -> sendingStage.close());
                 Platform.runLater(() -> successStage.show());
             } catch (Exception e) {
@@ -112,9 +148,6 @@ public class Model {
             }
         }
         ).start();
-    }
-
-    public void sendMail(String to, String subject, String text) {
-        sendMail(to, subject, text, null);
+        return success.get();
     }
 }
