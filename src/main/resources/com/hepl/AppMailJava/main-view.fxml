@@ -24,7 +24,7 @@
                                  <graphic>
                                     <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../../images/attachments1.png" />
+                                          <Image url="@../../../images/attachments.png" />
                                        </image>
                                        <viewport>
                                           <Rectangle2D />
