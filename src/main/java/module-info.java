@@ -6,4 +6,6 @@ module hepl.mailproject.application_mail_java {
 
     opens com.hepl.AppMailJava to javafx.fxml;
     exports com.hepl.AppMailJava;
+    exports com.hepl.AppMailJava.Model;
+    opens com.hepl.AppMailJava.Model to javafx.fxml;
 }

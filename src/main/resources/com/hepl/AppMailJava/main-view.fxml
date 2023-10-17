@@ -6,7 +6,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hepl.AppMailJava.Controller">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="525.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hepl.AppMailJava.Controller">
     <tabs>
         <Tab text="New Mail">
             <content>
@@ -17,45 +17,46 @@
                                 <HBox alignment="CENTER_LEFT" maxHeight="30.0" prefHeight="30.0" spacing="5.0" style="-fx-background-color: #ebebeb">
                                     <children>
                                         <Button minWidth="50.0" mnemonicParsing="false" onAction="#onSendClick" text="Send">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor></Button>
-                              <Button fx:id="ButtonAttachments" maxHeight="30.0" mnemonicParsing="false" onAction="#onAttachmentsClick" prefHeight="30.0" HBox.hgrow="NEVER">
-                                 <graphic>
-                                    <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../images/attachments.png" />
-                                       </image>
-                                       <viewport>
-                                          <Rectangle2D />
-                                       </viewport>
-                                       <cursor>
-                                          <Cursor fx:constant="DEFAULT" />
-                                       </cursor>
-                                    </ImageView>
-                                 </graphic>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Button>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
+                                        <Button fx:id="ButtonAttachments" maxHeight="30.0" mnemonicParsing="false" onAction="#onAttachmentsClick" prefHeight="30.0">
+                                            <graphic>
+                                                <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../../../images/attachments.png" />
+                                                    </image>
+                                                    <viewport>
+                                                        <Rectangle2D />
+                                                    </viewport>
+                                                    <cursor>
+                                                        <Cursor fx:constant="DEFAULT" />
+                                                    </cursor>
+                                                </ImageView>
+                                            </graphic>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
                                         <Label fx:id="LabelFrom" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                                     </padding>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="30.0" style="-fx-background-color: #ebebeb">
+                                <HBox alignment="CENTER" prefHeight="30.0" spacing="5.0" style="-fx-background-color: #ebebeb">
                                     <children>
-                                        <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" minWidth="50.0" text="To " textAlignment="RIGHT" />
+                                        <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" minWidth="50.0" text="To" textAlignment="RIGHT" />
                                         <TextField fx:id="InputTo" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                                     </padding>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="30.0" style="-fx-background-color: #ebebeb">
+                                <HBox alignment="CENTER" prefHeight="30.0" spacing="5.0" style="-fx-background-color: #ebebeb">
                                     <children>
-                                        <Label alignment="CENTER_RIGHT" minWidth="50.0" text="Subject " />
+                                        <Label alignment="CENTER_RIGHT" minWidth="50.0" text="Subject" />
                                         <TextField fx:id="InputSubject" HBox.hgrow="ALWAYS" />
                                     </children>
                                     <padding>
@@ -65,12 +66,13 @@
                                 <HBox style="-fx-border-width: 1 0 0 0; -fx-border-color: black;" VBox.vgrow="ALWAYS">
                                     <children>
                                         <TextArea fx:id="TextAreaMailContent" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin></TextArea>
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                        </TextArea>
                                     </children>
                                     <padding>
-                                        <Insets bottom="5.0" left="60.0" right="10.0" top="5.0" />
+                                        <Insets bottom="5.0" left="65.0" right="10.0" top="5.0" />
                                     </padding>
                                 </HBox>
                             </children>
@@ -79,9 +81,46 @@
                 </AnchorPane>
             </content>
         </Tab>
-        <Tab text="Mail List">
+        <Tab fx:id="TabMailbox" onSelectionChanged="#onSelectionMailbox" text="Mailbox">
             <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="496.0" prefWidth="900.0">
+                    <children>
+                        <VBox layoutX="136.0" layoutY="64.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" prefHeight="30.0" spacing="5.0" style="-fx-background-color: #ebebeb; -fx-border-width: 0 0 1 0; -fx-border-color: black;" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onRefreshClick" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="ALWAYS">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../../../images/refresh.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                            <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                            </cursor>
+                                        </Button>
+                              <ImageView fx:id="loadingImage" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                    </padding>
+                                </HBox>
+                                <TableView fx:id="TableViewMails" prefHeight="459.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn id="ColumnFrom" fx:id="ColumnFrom" prefWidth="${TableViewMails.width*0.2}" text="From" />
+                                        <TableColumn id="ColumnReceivedDate" fx:id="ColumnReceivedDate" prefWidth="${TableViewMails.width*0.1}" text="Date" />
+                                        <TableColumn id="ColumnSubject" fx:id="ColumnSubject" prefWidth="${TableViewMails.width*0.7}" text="Subject" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
             </content>
         </Tab>
     </tabs>
