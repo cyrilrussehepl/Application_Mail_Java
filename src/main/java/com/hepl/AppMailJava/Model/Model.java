@@ -16,8 +16,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.search.FromTerm;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Model {
@@ -28,14 +27,14 @@ public class Model {
     private String username;
     private String password;
     private File attachment;
-    private Folder mails;
+    private ArrayList<Email> mails;
 
     //Singleton constructor---------------------------------------------------------------------------------------------
     private Model() {
         setupPropsGmail();
         setLoginInfos("cyril.russe@gmail.com", "tfkfyfmhaesewmwp");
         setSession();
-
+        mails = new ArrayList<>();
     }
 
     public static Model getInstance() {
@@ -108,6 +107,10 @@ public class Model {
         this.attachment = attachment;
     }
 
+    public synchronized Object getContentOfMessageAt(int index) {
+        return mails.get(index).getContent();
+    }
+
     //Methods-----------------------------------------------------------------------------------------------------------
 
     // Méthode d'envoi d'email, simple si aucun attachment défini au préalable, multipart sinon
@@ -169,24 +172,21 @@ public class Model {
         return success.get();
     }
 
-    public ArrayList<Email> getMails() {
-        ArrayList<Email> listMail = new ArrayList<>();
+    public synchronized ArrayList<Email> getMails() {
         try {
             Store store = session.getStore("imaps");
             store.connect("imap.gmail.com", username, password);
-            mails = store.getFolder("INBOX");
-            mails.open(Folder.READ_ONLY);
+            Folder folder = store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+            Message messages[] = folder.search(new FromTerm(new InternetAddress("cyril.russe@hotmail.com")));
+            mails.clear();
+            for (int i = messages.length - 1; i >= 0; i--)
+                mails.add(new Email(messages[i].getFrom()[0].toString(), messages[i].getSubject(), messages[i].getReceivedDate(), messages[i].getContent()));
 
-            Message messages[] = mails.search(new FromTerm(new InternetAddress("cyril.russe@hotmail.com")));
-            for (Message message: messages)
-                    listMail.add(new Email(message.getFrom()[0].toString(), message.getSubject(), message.getReceivedDate()));
-
-            mails.close(false);
-            store.close();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        return listMail;
+        return mails;
     }
 }

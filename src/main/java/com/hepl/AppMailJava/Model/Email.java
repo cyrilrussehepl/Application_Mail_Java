@@ -11,11 +11,13 @@ public class Email {
     public String from;
     public String subject;
     public Date receivedDate;
+    public Object content;
 
-    public Email(String from, String subject, Date receivedDate) {
+    public Email(String from, String subject, Date receivedDate, Object content) {
         this.from = from;
         this.subject = subject;
         this.receivedDate = receivedDate;
+        this.content = content;
     }
 
     public String getFrom() {
@@ -28,6 +30,10 @@ public class Email {
 
     public Date getReceivedDate() {
         return receivedDate;
+    }
+
+    public Object getContent() {
+        return content;
     }
 
     public StringProperty fromProperty() {

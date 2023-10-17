@@ -4,13 +4,22 @@ import com.hepl.AppMailJava.Model.Email;
 import com.hepl.AppMailJava.Model.Model;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -42,12 +51,13 @@ public class Controller {
     private ImageView loadingImage;
 
     private Model model;
+    private static final int DELAY_REFRESH = 30;
 
     public void initialize() {
         model = Model.getInstance();
         LabelFrom.setText("From " + model.getUsername());
         ScheduledExecutorService threadRefresh = Executors.newSingleThreadScheduledExecutor();
-        threadRefresh.scheduleWithFixedDelay(()->onRefreshClick(),0,15, TimeUnit.SECONDS);
+        threadRefresh.scheduleWithFixedDelay(() -> onRefreshClick(), 0, DELAY_REFRESH, TimeUnit.SECONDS);
     }
 
     @FXML
@@ -78,9 +88,9 @@ public class Controller {
     @FXML
     protected void onRefreshClick() {
         new Thread(() -> {
-            Platform.runLater(() -> loadingImage.setImage(new Image("file:E:/1-Cyril/HEPL/B3/Réseau/JavaMail/Application_Mail_Java/src/main/resources/images/circle-loader.gif")));
+            Platform.runLater(() -> loadingImage.setImage(new Image(getClass().getResource("/images/circle-loader.gif").toExternalForm())));
             ArrayList<Email> mails = model.getMails();
-            if(mails==null){
+            if (mails == null) {
                 Platform.runLater(() -> loadingImage.setImage(null));
                 return;
             }
@@ -104,19 +114,64 @@ public class Controller {
     public static boolean ConfirmationDialog(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
-        alert.setHeaderText(null); // Pas de texte d'en-tête
+        alert.setHeaderText(null);
         alert.setContentText(content);
         alert.initStyle(StageStyle.UTILITY);
 
-        // Définir les boutons OK et Annuler
         ButtonType buttonTypeOK = new ButtonType("Send");
         ButtonType buttonTypeCancel = new ButtonType("Not Send", ButtonBar.ButtonData.NO);
         alert.getButtonTypes().setAll(buttonTypeOK, buttonTypeCancel);
 
-        // Afficher la boîte de dialogue et attendre la réponse de l'utilisateur
         alert.showAndWait();
-
-        // Vérifier si l'utilisateur a appuyé sur le bouton OK
         return alert.getResult() == buttonTypeOK;
+    }
+
+    @FXML
+    protected void onDisplayClick() {
+        int index = TableViewMails.getSelectionModel().getSelectedIndex();
+        if (index == -1)
+            return;
+        String emailContent = null;
+        Object content = model.getContentOfMessageAt(index);
+        try {
+            if (content instanceof String) {
+                emailContent = (String) content;
+            } else if (content instanceof Multipart) {
+                Multipart msgMP = (Multipart) content;
+                BodyPart bodyPart;
+                for (int i = 0; i < msgMP.getCount(); i++) {
+                    bodyPart = ((Multipart) content).getBodyPart(i);
+                    if (bodyPart.isMimeType("text/plain"))
+                        emailContent = (String) bodyPart.getContent();
+                }
+            } else {
+                throw new UnsupportedOperationException("Type de contenu non pris en charge : " + content.getClass());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (emailContent == null)
+            return;
+
+        Stage emailWindow = new Stage();
+        emailWindow.initModality(Modality.APPLICATION_MODAL);
+        emailWindow.setTitle("Contenu de l'email");
+
+        // Créer des composants pour afficher le contenu de l'email
+        Label label = new Label("Contenu de l'email :");
+        TextArea textArea = new TextArea(emailContent);
+        textArea.setEditable(false); // Pour rendre la zone de texte en lecture seule
+
+        // Mise en page des composants dans une boîte verticale (VBox)
+        VBox layout = new VBox(10); // Espacement vertical entre les composants
+        layout.getChildren().addAll(label, textArea);
+        layout.setPadding(new Insets(10));
+
+        // Créer la scène et définir la scène pour la fenêtre modale
+        Scene scene = new Scene(layout, 400, 300);
+        emailWindow.setScene(scene);
+
+        // Afficher la fenêtre modale
+        emailWindow.showAndWait();
     }
 }
