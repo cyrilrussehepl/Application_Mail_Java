@@ -14,6 +14,7 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
+import javax.mail.search.FromTerm;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -176,27 +177,16 @@ public class Model {
             mails = store.getFolder("INBOX");
             mails.open(Folder.READ_ONLY);
 
-            int messageCount = mails.getMessageCount();
-            Message[] messages = mails.getMessages(Math.max(1, messageCount - 10 + 1), messageCount);
-            for (int i = messages.length - 1; i >= 0; i--)
-                listMail.add(new Email(getSender(messages[i]), messages[i].getSubject(), messages[i].getReceivedDate()));
+            Message messages[] = mails.search(new FromTerm(new InternetAddress("cyril.russe@hotmail.com")));
+            for (Message message: messages)
+                    listMail.add(new Email(message.getFrom()[0].toString(), message.getSubject(), message.getReceivedDate()));
 
-            // Fermez la boîte aux lettres
             mails.close(false);
             store.close();
-
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         return listMail;
     }
-
-    private static String getSender(Message msg) throws MessagingException {
-        Address[] fromAddress = msg.getFrom();
-        if (fromAddress != null && fromAddress.length > 0)
-            return fromAddress[0].toString();
-        return "Unknown Sender";
-    }
-
 }

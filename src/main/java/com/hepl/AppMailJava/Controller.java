@@ -3,10 +3,8 @@ package com.hepl.AppMailJava;
 import com.hepl.AppMailJava.Model.Email;
 import com.hepl.AppMailJava.Model.Model;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -15,6 +13,9 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Controller {
     @FXML
@@ -45,6 +46,8 @@ public class Controller {
     public void initialize() {
         model = Model.getInstance();
         LabelFrom.setText("From " + model.getUsername());
+        ScheduledExecutorService threadRefresh = Executors.newSingleThreadScheduledExecutor();
+        threadRefresh.scheduleWithFixedDelay(()->onRefreshClick(),0,15, TimeUnit.SECONDS);
     }
 
     @FXML
@@ -77,6 +80,10 @@ public class Controller {
         new Thread(() -> {
             Platform.runLater(() -> loadingImage.setImage(new Image("file:E:/1-Cyril/HEPL/B3/Réseau/JavaMail/Application_Mail_Java/src/main/resources/images/circle-loader.gif")));
             ArrayList<Email> mails = model.getMails();
+            if(mails==null){
+                Platform.runLater(() -> loadingImage.setImage(null));
+                return;
+            }
             Platform.runLater(() -> {
                 TableViewMails.getItems().setAll(mails);
             });
@@ -85,9 +92,7 @@ public class Controller {
             ColumnReceivedDate.setCellValueFactory(c -> c.getValue().receivedDateProperty());
             ColumnSubject.setCellValueFactory(c -> c.getValue().subjectProperty());
             Platform.runLater(() -> loadingImage.setImage(null));
-
         }).start();
-
     }
 
     @FXML
