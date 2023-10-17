@@ -27,6 +27,7 @@ public class Model {
     private String username;
     private String password;
     private File attachment;
+    private File image;
     private ArrayList<Email> mails;
 
     //Singleton constructor---------------------------------------------------------------------------------------------
@@ -107,8 +108,17 @@ public class Model {
         this.attachment = attachment;
     }
 
+    public void setImage(File image){
+        this.image = image;
+    }
+
     public synchronized Object getContentOfMessageAt(int index) {
         return mails.get(index).getContent();
+    }
+
+    public void resetAttachment() {
+        this.attachment = null;
+        this.image = null;
     }
 
     //Methods-----------------------------------------------------------------------------------------------------------
@@ -119,9 +129,15 @@ public class Model {
     // @param text : contenu du mail
     // @param return : true si succès de l'envoi du mail, false sinon
     public boolean sendMail(String to, String subject, String text) {
-        Stage sendingStage = createTempStage("Sending message...", null, false);
-        Stage successStage = createTempStage("Message sent successfully", "Success", true);
-        Stage errorStage = createTempStage("Unable to send the message. An error occurred.\nPlease verify the recipient's email address and try again.", "Error", true);
+        Stage sendingStage = createTempStage("Sending message...",
+                null,
+                false);
+        Stage successStage = createTempStage("Message sent successfully",
+                "Success",
+                true);
+        Stage errorStage = createTempStage("Unable to send the message. An error occurred.\nPlease verify the recipient's email address and try again.",
+                "Error",
+                true);
         Message msg = new MimeMessage(session);
         AtomicBoolean success = new AtomicBoolean(false);
 
@@ -130,25 +146,32 @@ public class Model {
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
             msg.setSubject(subject);
 
-            //Add attachment to msg if exists
-            if (attachment != null) {
+            //Create MultiPart msg if attachment or image exists
+            if (attachment != null || image != null) {
                 //Text
                 MimeMultipart msgMP = new MimeMultipart();
                 MimeBodyPart msgBP = new MimeBodyPart();
                 msgBP.setText(text);
                 msgMP.addBodyPart(msgBP);
-
                 //File
-                msgBP = new MimeBodyPart();
-                DataSource so = new FileDataSource(attachment.getAbsolutePath());
-                msgBP.setDataHandler(new DataHandler(so));
-                msgBP.setFileName(attachment.getAbsolutePath());
-                msgMP.addBodyPart(msgBP);
+                if (attachment != null) {
+                    msgBP = new MimeBodyPart();
+                    DataSource so = new FileDataSource(attachment.getAbsolutePath());
+                    msgBP.setDataHandler(new DataHandler(so));
+                    msgBP.setFileName(attachment.getAbsolutePath());
+                    msgMP.addBodyPart(msgBP);
+                }
 
                 //Image
-
+                if (image != null) {
+                    msgBP = new MimeBodyPart();
+                    DataSource so = new FileDataSource(image.getAbsolutePath());
+                    msgBP.setDataHandler(new DataHandler(so));
+                    msgBP.setFileName(image.getAbsolutePath());
+                    msgMP.addBodyPart(msgBP);
+                }
                 msg.setContent(msgMP);
-            } else
+            } else //Otherwise set simple text content to msg
                 msg.setText(text);
         } catch (Exception e) {
             errorStage.show();
@@ -181,7 +204,10 @@ public class Model {
             Message messages[] = folder.search(new FromTerm(new InternetAddress("cyril.russe@hotmail.com")));
             mails.clear();
             for (int i = messages.length - 1; i >= 0; i--)
-                mails.add(new Email(messages[i].getFrom()[0].toString(), messages[i].getSubject(), messages[i].getReceivedDate(), messages[i].getContent()));
+                mails.add(new Email(messages[i].getFrom()[0].toString(),
+                        messages[i].getSubject(),
+                        messages[i].getReceivedDate(),
+                        messages[i].getContent()));
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -40,6 +40,10 @@
                                             </cursor>
                                         </Button>
                                         <Label fx:id="LabelFrom" HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onAction="#onImgClick" text="Image" />
+                              <Button mnemonicParsing="false" onAction="#onResetClick" text="Reset" />
+                              <Label fx:id="LabelFile" />
+                              <Label fx:id="LabelImg" />
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />

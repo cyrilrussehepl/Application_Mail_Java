@@ -16,10 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import javax.mail.BodyPart;
-import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -49,15 +46,25 @@ public class Controller {
     private TableColumn<Email, String> ColumnSubject;
     @FXML
     private ImageView loadingImage;
+    @FXML
+    private Label LabelFile;
+    @FXML
+    private Label LabelImg;
+
 
     private Model model;
     private static final int DELAY_REFRESH = 30;
+    private ScheduledExecutorService threadRefresh;
 
     public void initialize() {
         model = Model.getInstance();
         LabelFrom.setText("From " + model.getUsername());
-        ScheduledExecutorService threadRefresh = Executors.newSingleThreadScheduledExecutor();
+        threadRefresh = Executors.newSingleThreadScheduledExecutor();
         threadRefresh.scheduleWithFixedDelay(() -> onRefreshClick(), 0, DELAY_REFRESH, TimeUnit.SECONDS);
+    }
+
+    public void closeThread(){
+        threadRefresh.shutdown();
     }
 
     @FXML
@@ -83,6 +90,19 @@ public class Controller {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
         File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow());
         model.setAttachment(selectedFile);
+        LabelFile.setText(selectedFile.getName());
+    }
+
+    @FXML
+    protected void onImgClick() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Attachments FileChooser");
+        FileChooser.ExtensionFilter jpgFilter = new FileChooser.ExtensionFilter("Fichiers JPG (*.jpg)", "*.jpg");
+        FileChooser.ExtensionFilter gifFilter = new FileChooser.ExtensionFilter("Fichiers GIF (*.gif)", "*.gif");
+        fileChooser.getExtensionFilters().addAll(jpgFilter, gifFilter);
+        File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow());
+        model.setImage(selectedFile);
+        LabelImg.setText(selectedFile.getName());
     }
 
     @FXML
@@ -173,5 +193,15 @@ public class Controller {
 
         // Afficher la fenêtre modale
         emailWindow.showAndWait();
+    }
+
+    @FXML
+    protected void onResetClick(){
+        InputTo.clear();
+        InputSubject.clear();
+        TextAreaMailContent.clear();
+        model.resetAttachment();
+        LabelFile.setText("");
+        LabelImg.setText("");
     }
 }
