@@ -91,7 +91,7 @@ public class Controller {
 
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
         try {
-            File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow())
+            File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow());
             if (selectedFile != null) {
                 model.setAttachment(selectedFile);
                 LabelFile.setText(selectedFile.getName());
@@ -179,7 +179,7 @@ public class Controller {
                         emailContent = (String) bodyPart.getContent();
                 }
             } else {
-                throw new UnsupportedOperationException("Type de contenu non pris en charge : " + content.getClass());
+                throw new UnsupportedOperationException("Unhandle content type : " + content.getClass());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,25 +187,30 @@ public class Controller {
         if (emailContent == null)
             return;
 
+        displayWindow("Email content", emailContent);
+    }
+
+    @FXML
+    protected void onDisplayHeader(){
+        int index = TableViewMails.getSelectionModel().getSelectedIndex();
+        if (index == -1)
+            return;
+
+        displayWindow("Header", model.getHeaderOfMessageAt(index));
+    }
+
+    private static void displayWindow(String title, String content){
         Stage emailWindow = new Stage();
         emailWindow.initModality(Modality.APPLICATION_MODAL);
-        emailWindow.setTitle("Contenu de l'email");
-
-        // Créer des composants pour afficher le contenu de l'email
-        Label label = new Label("Contenu de l'email :");
-        TextArea textArea = new TextArea(emailContent);
-        textArea.setEditable(false); // Pour rendre la zone de texte en lecture seule
-
-        // Mise en page des composants dans une boîte verticale (VBox)
-        VBox layout = new VBox(10); // Espacement vertical entre les composants
-        layout.getChildren().addAll(label, textArea);
+        emailWindow.setTitle(title);
+        TextArea textArea = new TextArea(content);
+        textArea.setEditable(false);
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(textArea);
         layout.setPadding(new Insets(10));
-
-        // Créer la scène et définir la scène pour la fenêtre modale
-        Scene scene = new Scene(layout, 400, 300);
+        Scene scene = new Scene(layout, 600, 400);
+        textArea.prefHeightProperty().bind(scene.heightProperty());
         emailWindow.setScene(scene);
-
-        // Afficher la fenêtre modale
         emailWindow.showAndWait();
     }
 

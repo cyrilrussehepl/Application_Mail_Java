@@ -12,12 +12,14 @@ public class Email {
     public String subject;
     public Date receivedDate;
     public Object content;
+    public String header;
 
-    public Email(String from, String subject, Date receivedDate, Object content) {
+    public Email(String from, String subject, Date receivedDate, Object content, String header) {
         this.from = from;
         this.subject = subject;
         this.receivedDate = receivedDate;
         this.content = content;
+        this.header = header;
     }
 
     public String getFrom() {
@@ -34,6 +36,10 @@ public class Email {
 
     public Object getContent() {
         return content;
+    }
+
+    public String getHeader(){
+        return header;
     }
 
     public StringProperty fromProperty() {

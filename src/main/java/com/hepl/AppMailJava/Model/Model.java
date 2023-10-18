@@ -116,6 +116,8 @@ public class Model {
         return mails.get(index).getContent();
     }
 
+    public synchronized String getHeaderOfMessageAt(int index){return mails.get(index).getHeader();}
+
     public void resetAttachment() {
         this.attachment = null;
         this.image = null;
@@ -204,11 +206,24 @@ public class Model {
             folder.open(Folder.READ_ONLY);
             Message messages[] = folder.search(new FromTerm(new InternetAddress("cyril.russe@hotmail.com")));
             mails.clear();
-            for (int i = messages.length - 1; i >= 0; i--)
+            String header;
+            Enumeration e;
+            for (int i = messages.length - 1; i >= 0; i--){
+                e = messages[i].getAllHeaders();
+                Header h = (Header)e.nextElement();
+                header = new String();
+                while (e.hasMoreElements()) {
+                    header += h.getName() + " -- >" + h.getValue()+"\n";
+                    h = (Header)e.nextElement();
+                }
+
                 mails.add(new Email(messages[i].getFrom()[0].toString(),
                         messages[i].getSubject(),
                         messages[i].getReceivedDate(),
-                        messages[i].getContent()));
+                        messages[i].getContent(),
+                        header));
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
