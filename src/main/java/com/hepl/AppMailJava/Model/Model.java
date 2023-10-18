@@ -187,6 +187,7 @@ public class Model {
                 Platform.runLater(() -> sendingStage.close());
                 Platform.runLater(() -> successStage.show());
             } catch (Exception e) {
+                Platform.runLater(() -> sendingStage.close());
                 Platform.runLater(() -> errorStage.show());
                 System.out.println("Message Error : " + e.getMessage());
             }

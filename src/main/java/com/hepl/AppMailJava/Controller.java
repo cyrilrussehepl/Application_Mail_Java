@@ -63,7 +63,7 @@ public class Controller {
         threadRefresh.scheduleWithFixedDelay(() -> onRefreshClick(), 0, DELAY_REFRESH, TimeUnit.SECONDS);
     }
 
-    public void closeThread(){
+    public void closeThread() {
         threadRefresh.shutdown();
     }
 
@@ -87,22 +87,36 @@ public class Controller {
     protected void onAttachmentsClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Attachments FileChooser");
+
+
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
-        File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow());
-        model.setAttachment(selectedFile);
-        LabelFile.setText(selectedFile.getName());
+        try {
+            File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow())
+            if (selectedFile != null) {
+                model.setAttachment(selectedFile);
+                LabelFile.setText(selectedFile.getName());
+            }
+        } catch (Exception e) {
+
+        }
     }
 
     @FXML
     protected void onImgClick() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Attachments FileChooser");
+        fileChooser.setTitle("Image FileChooser");
         FileChooser.ExtensionFilter jpgFilter = new FileChooser.ExtensionFilter("Fichiers JPG (*.jpg)", "*.jpg");
         FileChooser.ExtensionFilter gifFilter = new FileChooser.ExtensionFilter("Fichiers GIF (*.gif)", "*.gif");
         fileChooser.getExtensionFilters().addAll(jpgFilter, gifFilter);
-        File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow());
-        model.setImage(selectedFile);
-        LabelImg.setText(selectedFile.getName());
+        try {
+            File selectedFile = fileChooser.showOpenDialog((Stage) ButtonAttachments.getScene().getWindow());
+            if (selectedFile != null) {
+                model.setImage(selectedFile);
+                LabelImg.setText(selectedFile.getName());
+            }
+        } catch (Exception e) {
+
+        }
     }
 
     @FXML
@@ -196,7 +210,7 @@ public class Controller {
     }
 
     @FXML
-    protected void onResetClick(){
+    protected void onResetClick() {
         InputTo.clear();
         InputSubject.clear();
         TextAreaMailContent.clear();
