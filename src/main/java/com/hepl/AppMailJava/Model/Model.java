@@ -67,14 +67,9 @@ public class Model {
         );
     }
 
-    // Création d'une fenêtre temporaire
-    // @param message : chaine de char à afficher dans la fenêtre
-    // @param title : param optionnel, titre de la fenêtre
-    // @param closable : booléen pour définir si c'est une fenêtre que l'utilisateur peut fermer
-    // @return : objet Stage correspondant à la fenêtre temporaire créée
     public static Stage createTempStage(String message, String title, boolean closable) {
         Stage stage = new Stage();
-        stage.initOwner(null);  // Pour qu'il soit indépendant de la fenêtre principale
+        stage.initOwner(null);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
         if (title != null)
@@ -94,7 +89,6 @@ public class Model {
 
     //Setters and Getters-----------------------------------------------------------------------------------------------
 
-    // Setteur des infos de connexion, donc du login et mot de passe
     public void setLoginInfos(String username, String password) {
         this.username = username;
         this.password = password;
@@ -125,11 +119,6 @@ public class Model {
 
     //Methods-----------------------------------------------------------------------------------------------------------
 
-    // Méthode d'envoi d'email, simple si aucun attachment défini au préalable, multipart sinon
-    // @param to : adresse du destinataire
-    // @param subject : objet du mail
-    // @param text : contenu du mail
-    // @param return : true si succès de l'envoi du mail, false sinon
     public boolean sendMail(String to, String subject, String text) {
         Stage sendingStage = createTempStage("Sending message...",
                 null,
@@ -148,14 +137,12 @@ public class Model {
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
             msg.setSubject(subject);
 
-            //Create MultiPart msg if attachment or image exists
             if (attachment != null || image != null) {
-                //Text
                 MimeMultipart msgMP = new MimeMultipart();
                 MimeBodyPart msgBP = new MimeBodyPart();
                 msgBP.setText(text);
                 msgMP.addBodyPart(msgBP);
-                //File
+
                 if (attachment != null) {
                     msgBP = new MimeBodyPart();
                     DataSource so = new FileDataSource(attachment.getAbsolutePath());
@@ -164,7 +151,6 @@ public class Model {
                     msgMP.addBodyPart(msgBP);
                 }
 
-                //Image
                 if (image != null) {
                     msgBP = new MimeBodyPart();
                     DataSource so = new FileDataSource(image.getAbsolutePath());
@@ -173,7 +159,7 @@ public class Model {
                     msgMP.addBodyPart(msgBP);
                 }
                 msg.setContent(msgMP);
-            } else //Otherwise set simple text content to msg
+            } else
                 msg.setText(text);
         } catch (Exception e) {
             errorStage.show();
@@ -222,7 +208,6 @@ public class Model {
                         messages[i].getReceivedDate(),
                         messages[i].getContent(),
                         header));
-
             }
 
         } catch (Exception e) {
