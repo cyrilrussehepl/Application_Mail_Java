@@ -40,8 +40,14 @@
                                             </cursor>
                                         </Button>
                                         <Label fx:id="LabelFrom" HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#onImgClick" text="Image" />
-                              <Button mnemonicParsing="false" onAction="#onResetClick" text="Reset" />
+                              <Button mnemonicParsing="false" onAction="#onImgClick" text="Image">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Button mnemonicParsing="false" onAction="#onResetClick" text="Reset">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
                               <Label fx:id="LabelFile" />
                               <Label fx:id="LabelImg" />
                                     </children>
@@ -109,8 +115,14 @@
                                             </cursor>
                                         </Button>
                               <ImageView fx:id="loadingImage" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" />
-                              <Button mnemonicParsing="false" onAction="#onDisplayClick" text="Display mail" />
-                              <Button mnemonicParsing="false" onAction="#onDisplayHeader" text="Display header" />
+                              <Button mnemonicParsing="false" onAction="#onDisplayClick" text="Display mail">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
+                              <Button mnemonicParsing="false" onAction="#onDisplayHeader" text="Display header">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
                                     </children>
                                     <padding>
                                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
